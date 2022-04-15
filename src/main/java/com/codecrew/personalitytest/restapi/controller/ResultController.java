@@ -54,6 +54,7 @@ public class ResultController {
                             .traitType(traitType)
                             .point(question.getPoint())
                             .traitGroup(question.getTraitGroup())
+                            .result(result)
                             .build()
             );
         });
@@ -65,6 +66,21 @@ public class ResultController {
         return ResponseEntity.ok(result);
     }
 
-    // TODO: ADD PATCH
-    // TODO: ADD DELETE
+    @PatchMapping("/{id}")
+    public ResponseEntity<Result> updateResult(@RequestBody Result result, @PathVariable int id){
+        var old_result = resultRepository.findById(id).orElseThrow();
+        old_result.setTraits(result.getTraits());
+        old_result.setGender(result.getGender());
+        old_result.setPersonName(result.getPersonName());
+        resultRepository.save(old_result);
+
+        return ResponseEntity.ok(old_result);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Result> deleteResult(@PathVariable int id){
+        var result = resultRepository.findById(id).orElseThrow();
+        resultRepository.delete(result);
+        return ResponseEntity.ok(result);
+    }
 }

@@ -21,6 +21,7 @@ public class Application {
 	* Questions will be added manually because they are static
 	* Answer -> question number + answer
 	* Exception handler will be added
+	* Validation for question & answers
 	* */
 
 	/*
