@@ -5,5 +5,11 @@ import lombok.Data;
 
 import java.util.Date;
 
-public record ErrorMessage(int statusCode, Date timestamp, String message, String description) {
+@Data
+@AllArgsConstructor
+public class ErrorMessage {
+    public int statusCode;
+    public Date timestamp;
+    public String message;
+    public String description;
 }

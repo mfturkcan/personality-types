@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Date;
 
@@ -12,19 +13,24 @@ import java.util.Date;
 public class ControllerExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorMessage> resourceNotFoundException(ResourceNotFoundException exception, WebRequest request){
+    public String resourceNotFoundException(
+            ResourceNotFoundException exception,
+            WebRequest request,
+            RedirectAttributes redirectAttributes){
         var errorMessage = new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 new Date(),
                 exception.getMessage(),
                 request.getDescription(false)
                 );
-
-        return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.NOT_FOUND);
+        redirectAttributes.addAttribute("errorMessage", errorMessage);
+        return "redirect:/error";
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorMessage> globalException(Exception exception, WebRequest request){
+    public String globalException(Exception exception,
+                                WebRequest request,
+                                RedirectAttributes redirectAttributes){
         var errorMessage = new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 new Date(),
@@ -32,6 +38,7 @@ public class ControllerExceptionHandler {
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<ErrorMessage>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
+        return "redirect:/error";
     }
 }

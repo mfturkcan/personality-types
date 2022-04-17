@@ -1,59 +1,79 @@
 package com.codecrew.personalitytest.restapi.controller;
 
 import com.codecrew.personalitytest.restapi.dao.QuestionRepository;
+import com.codecrew.personalitytest.restapi.model.Answer;
 import com.codecrew.personalitytest.restapi.model.Question;
+import org.hibernate.boot.model.source.spi.Sortable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@RestController
-@RequestMapping("/api/v1/question")
+@Controller
+@RequestMapping("/question")
 public class QuestionController {
     private final QuestionRepository questionRepository;
 
     @Autowired
-    public QuestionController(QuestionRepository questionRepository) {
+    private final Answer answer;
+    static int PAGE_SIZE = 8;
+
+    @Autowired
+    public QuestionController(QuestionRepository questionRepository, Answer answer) {
         this.questionRepository = questionRepository;
+        this.answer = answer;
     }
 
     @GetMapping
-    public ResponseEntity<List<Question>> getQuestions(){
-        var questions = questionRepository.findAll();
-        return ResponseEntity.ok(questions);
+    public String getQuestions(Model model){
+        List<Question> questions = questionRepository.findAll(Sort.by("questionNumber"));
+        model.addAttribute("questions", questions);
+
+        return "question/index";
     }
 
-    @GetMapping("/{questionNumber}")
-    public ResponseEntity<Question> getQuestion(@PathVariable short questionNumber){
-        var question = questionRepository.findByQuestionNumber(questionNumber).orElseThrow();
-        return ResponseEntity.ok(question);
+
+    @GetMapping("/{pageNo}")
+    public String getQuestionsByPage(Model model,
+                                     @PathVariable(required = false) Optional<Integer> pageNo,
+                                     Answer answer){
+        if(!pageNo.isPresent()) pageNo = Optional.of(0);
+        Pageable pageable = PageRequest.of(pageNo.get(), PAGE_SIZE, Sort.by("questionNumber"));
+        List<Question> questions = questionRepository.findAll(pageable).toList();
+
+        model.addAttribute("answer", answer);
+        model.addAttribute("questions", questions);
+
+        return "question/index";
     }
 
-    @PostMapping
-    public ResponseEntity<Question> addQuestion(@RequestBody Question question){
-        questionRepository.save(question);
-        return ResponseEntity.ok(question);
-    }
 
-    @PatchMapping("/{questionNumber}")
-    public ResponseEntity<Question> updateQuestion(@RequestBody Question question,@PathVariable short questionNumber){
-        var old_question = questionRepository.findByQuestionNumber(questionNumber).orElseThrow();
-        old_question.setQuestion(question.getQuestion());
-        old_question.setCaseFalse(question.getCaseFalse());
-        old_question.setCaseTrue(question.getCaseTrue());
-        old_question.setPoint(question.getPoint());
-        old_question.setTraitGroup(question.getTraitGroup());
-        old_question.setQuestionNumber(question.getQuestionNumber());
+    @PostMapping("/{pageNo}")
+    public RedirectView postQuestion(@RequestBody List<Question> questions,
+                                     @PathVariable int pageNo,
+                                     Model model){
+        RedirectView redirectView = new RedirectView();
+        redirectView.setContextRelative(true);
 
-        questionRepository.save(old_question);
-        return ResponseEntity.ok(question);
-    }
+        if(questionRepository.count() / PAGE_SIZE  <= pageNo){
+            // last page
+            // return answer to result and save
+            // return result page with result object
+            return redirectView;
+        }
+        // else, add values to answer list
+        model.addAttribute("pageNo",pageNo+1);
+        redirectView.setUrl("question/index/{pageNo}");
 
-    @DeleteMapping("/{questionNumber}")
-    public ResponseEntity<Question> deleteQuestion(@PathVariable short questionNumber){
-        var question = questionRepository.findByQuestionNumber(questionNumber).orElseThrow();
-        questionRepository.delete(question);
-        return ResponseEntity.ok(question);
+        return redirectView;
     }
 }

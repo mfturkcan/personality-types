@@ -21,6 +21,8 @@ public class Question {
     private short questionNumber;
     private short point;
     private PersonalityTraitGroup traitGroup;
+    private String answerTrue;
+    private String answerFalse;
     private PersonalityTraitType caseTrue;
     private PersonalityTraitType caseFalse;
 }
