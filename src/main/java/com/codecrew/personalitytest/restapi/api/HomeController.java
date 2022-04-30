@@ -4,11 +4,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
-//@Controller
+@Controller
 public class HomeController {
 
-    /*@GetMapping("/")
-    public RedirectView getSwagger(){
+    @GetMapping("/")
+    public RedirectView getSwagger() {
         return new RedirectView("/swagger-ui/index.html");
-    }*/
+    }
 }

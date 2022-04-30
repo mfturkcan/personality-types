@@ -1,0 +1,110 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif !important;
+}
+
+.navbar-light .navbar-nav .active>.nav-link,
+.navbar-light .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .nav-link.show,
+.navbar-light .navbar-nav .show>.nav-link {
+    color: #06ee9a !important;
+}
+
+
+.nav-link:hover {
+    transition: 0.5s;
+    color: rgb(6, 238, 154, 0.7) !important;
+}
+
+.bg-orange {
+    background-color: rgb(255, 140, 0);
+}
+
+.text-black>li>a,
+.text-black {
+    color: black !important;
+}
+
+.text-grey {
+    color: grey;
+}
+
+.content {
+    margin: 50px 150px;
+}
+
+.user-info>span {
+    font-size: 14px;
+    display: block !important;
+}
+
+.user-info-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    font-size: 26px;
+    color: #fff;
+    margin-right: 10px;
+}
+
+.question {
+    margin: 30px 0;
+}
+
+.questionText {
+    width: 500px;
+    padding: 20px;
+    background-color: rgb(6, 238, 154, 0.2);
+    border-radius: 100px;
+    margin-bottom: 20px;
+}
+
+label.check {
+    cursor: pointer;
+    display: block;
+}
+
+label.check input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    pointer-events: none
+}
+
+label.check span {
+    padding: 7px 14px;
+    border: 2px solid #06ee9a;
+    display: inline-block;
+    color: #06ee9a;
+    width: 500px;
+    border-radius: 3px;
+    text-transform: uppercase
+}
+
+label.check input:checked+span {
+    border-color: #06ee9a;
+    background-color: #06ee9a;
+    color: #fff
+}
+
+.home-image {
+    width: 60%;
+    height: 60%;
+    object-fit: cover;
+}
+
+.main {
+    padding-bottom: 200px;
+}

@@ -1,17 +1,19 @@
 package com.codecrew.personalitytest.restapi.model;
 
-import com.codecrew.personalitytest.restapi.enums.Gender;
+import java.io.Serializable;
+
+import org.springframework.boot.jackson.JsonComponent;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Data @Builder
-@AllArgsConstructor @NoArgsConstructor
-public class Answer {
-    private String personName;
-    private Gender gender;
-    private List<Boolean> answers;
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class Answer extends BasedEntity implements Serializable {
+    private boolean questionAnswer; // 1,0
+    private Question question;
 }

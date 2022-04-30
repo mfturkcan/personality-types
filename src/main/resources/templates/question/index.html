@@ -1,19 +1,37 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.com"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.com" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="layout">
+
 <head>
-    <meta charset="UTF-8">
     <title>Questions</title>
 </head>
+
 <body>
     <!-- Questions foreach   -->
     <div layout:fragment="content">
         <h1>Questions</h1>
 
-        <div th:each="question : ${questions}">
-            <div th:text="${question.getQuestion()}"></div>
-        </div>
+        <form th:action="@{/question/saveQuestions}" th:object="${answers}" method="post" id="question-form">
+
+            <div name="answers" th:each="answer, iteration : ${answers}">
+                <div class="questionText mx-auto shadow" th:text="${answer.question.question}" id="question">
+                </div>
+                <label class="check">
+                    <input type="radio" value="true" th:name="'answer_'+${iteration.index}" id="true_answer">
+                    <span th:text="${answer.question?.answerTrue}"></span>
+                </label>
+                <label class="check">
+                    <input type="radio" th:name="'answer_'+${iteration.index}" value="false" id="false_answer">
+                    <span th:text="${answer.question?.answerFalse}"></span>
+                </label>
+            </div>
+            <!-- th:field="*{answers[__${iteration.index}__].question}" -->
+            <!-- th:field="*{answers[__${iteration.index}__].questionAnswer}" -->
+            <button type="submit">Next</button>
+
+        </form>
+    </div>
     </div>
 </body>
+
 </html>

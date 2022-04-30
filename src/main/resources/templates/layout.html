@@ -1,27 +1,98 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.thymeleaf.com">
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.com">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+    <!-- <link href="/css/bootstrap.min.css" rel="stylesheet" /> -->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link th:href="@{/css/site.css}" rel="stylesheet" />
+    <script th:src="@{/jquery/jquery.min.js}"></script>
     <script src="/js/site.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
 
     <!-- Navbar   -->
     <section class="content-header">
-        <h2>Navbar</h2>
+        <nav class="navbar navbar-expand-lg navbar-light p-0">
+            <div class="container">
+                <ul class="navbar-nav nav-fill justify-content-around w-100 text-black">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">WHAT IS MBTI?</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="personalityTraits">PERSONALITY TRAITS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/article">ARTICLES</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/question">TAKE THE TEST</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
     </section>
 
 
-    <div layout:fragment="content">
+    <div layout:fragment="content" class="container content text-center main">
     </div>
-
     <!-- Footer   -->
-    <footer>
-        <h2>Footer</h2>
+    <footer class="bg-light text-center text-white fixed-bottom">
+        <!-- Social Media -->
+        <div class="container p-4 pb-0 mb-1">
+            <!-- Facebook -->
+            <a class="btn btn-primary btn-floating m-1" style="background-color: #3b5998;" href="#" role="button">
+                <i class="fa fa-facebook-f"></i>
+
+            </a>
+
+            <!-- Twitter -->
+            <a class="btn btn-primary btn-floating m-1" style="background-color: #55acee;" href="#" role="button">
+                <i class="fa fa-twitter"></i>
+            </a>
+
+            <!-- Instagram -->
+            <a class="btn btn-primary btn-floating m-1" style="background-color: #ac2bac;" href="#" role="button">
+                <i class="fa fa-instagram"></i>
+            </a>
+
+            <!-- Github -->
+            <a class="btn btn-primary btn-floating m-1" style="background-color: #333333;" href="#" role="button">
+                <i class="fa fa-github"></i>
+            </a>
+
+            <!-- Swagger Test -->
+            <a class="btn btn-primary btn-floating m-1" style="background-color: #1d562a;" th:href="@{'/swagger'}"
+                role="button">
+                <i class="fa fa-shield"></i>
+            </a>
+
+        </div>
+        <!-- Social Media -->
+
+        <!-- Copyright -->
+        <div class="text-center p-2 bg-orange">
+            <h6>
+                © 2022 Copyright:
+                <a class="text-black pl-1" href="#">GROUP2</a>
+            </h6>
+        </div>
+        <!-- Copyright -->
     </footer>
+
 </body>
+
 </html>

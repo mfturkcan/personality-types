@@ -1,6 +1,8 @@
 package com.codecrew.personalitytest.restapi.config;
 
 import com.codecrew.personalitytest.restapi.model.Answer;
+import com.codecrew.personalitytest.restapi.model.Result;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -9,7 +11,7 @@ import org.springframework.context.annotation.Scope;
 public class ApplicationConfig {
     @Bean
     @Scope(value = "singleton")
-    public Answer answer(){
-        return new Answer();
+    public Result result() {
+        return new Result();
     }
 }

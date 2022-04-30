@@ -2,22 +2,61 @@ package com.codecrew.personalitytest.restapi.model;
 
 import com.codecrew.personalitytest.restapi.enums.PersonalityTraitGroup;
 import com.codecrew.personalitytest.restapi.enums.PersonalityTraitType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
+import org.springframework.boot.jackson.JsonComponent;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 
 @Entity
-@Data @Builder
-@AllArgsConstructor @NoArgsConstructor
-public class Question {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonComponent
+public class Question implements Serializable {
+
+    public Question(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            var question = mapper.readValue(json, Question.class);
+
+            this.id = question.getId();
+            this.question = question.getQuestion();
+            this.answerFalse = question.getAnswerFalse();
+            this.answerTrue = question.getAnswerTrue();
+            this.caseTrue = question.getCaseTrue();
+            this.caseFalse = question.getCaseFalse();
+            this.point = question.getPoint();
+            this.questionNumber = question.getQuestionNumber();
+            this.traitGroup = question.getTraitGroup();
+
+        } catch (JsonMappingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Column(name = "question", columnDefinition = "LONGTEXT")
-    private String question;
+    private String question; // TODO: make variable name questionTitle
     private short questionNumber;
     private short point;
     private PersonalityTraitGroup traitGroup;
@@ -25,4 +64,9 @@ public class Question {
     private String answerFalse;
     private PersonalityTraitType caseTrue;
     private PersonalityTraitType caseFalse;
+
+    public String toJson() throws JsonProcessingException {
+        ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        return writer.writeValueAsString(this);
+    }
 }

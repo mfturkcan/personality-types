@@ -16,27 +16,25 @@ public class ControllerExceptionHandler {
     public String resourceNotFoundException(
             ResourceNotFoundException exception,
             WebRequest request,
-            RedirectAttributes redirectAttributes){
+            RedirectAttributes redirectAttributes) {
         var errorMessage = new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 new Date(),
                 exception.getMessage(),
-                request.getDescription(false)
-                );
+                request.getDescription(false));
         redirectAttributes.addAttribute("errorMessage", errorMessage);
         return "redirect:/error";
     }
 
     @ExceptionHandler(Exception.class)
     public String globalException(Exception exception,
-                                WebRequest request,
-                                RedirectAttributes redirectAttributes){
+            WebRequest request,
+            RedirectAttributes redirectAttributes) {
         var errorMessage = new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 new Date(),
                 exception.getMessage(),
-                request.getDescription(false)
-        );
+                request.getDescription(false));
 
         redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
         return "redirect:/error";
