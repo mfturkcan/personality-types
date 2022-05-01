@@ -7,5 +7,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
-    Optional<Question> findByQuestionNumber(short questionNumber);
 }

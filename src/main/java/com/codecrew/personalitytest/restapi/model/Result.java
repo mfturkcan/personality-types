@@ -1,20 +1,20 @@
 package com.codecrew.personalitytest.restapi.model;
 
 import com.codecrew.personalitytest.restapi.enums.Gender;
-
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -28,8 +28,11 @@ public class Result {
     private int id;
     private String personName;
     private Gender gender;
+    private String email;
+    private boolean isPublic;
+    private LocalDate date;
 
-    @Type(type = "json")
-    @Column(name = "answers", columnDefinition = "json")
-    private List<Answer> answers = new ArrayList<>();
+    @JsonManagedReference
+    @OneToMany(mappedBy = "result", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private List<PersonalityTrait> traits;
 }

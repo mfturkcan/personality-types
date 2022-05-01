@@ -1,51 +1,38 @@
 package com.codecrew.personalitytest.restapi.controller;
 
 import com.codecrew.personalitytest.restapi.dao.QuestionRepository;
-import com.codecrew.personalitytest.restapi.model.Answer;
+import com.codecrew.personalitytest.restapi.exception.ResourceNotFoundException;
 import com.codecrew.personalitytest.restapi.model.Question;
-import com.codecrew.personalitytest.restapi.model.Result;
-
-import org.hibernate.boot.model.source.spi.Sortable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/question")
+@RestController(value = "api.question")
+@RequestMapping("/api/v1/question")
 public class QuestionController {
     private final QuestionRepository questionRepository;
-
-    @Autowired
-    private final Result result;
     static int PAGE_SIZE = 8;
     public static int QUESTION_COUNT;
 
     @Autowired
-    public QuestionController(QuestionRepository questionRepository, Result result) {
+    public QuestionController(QuestionRepository questionRepository) {
         this.questionRepository = questionRepository;
-        this.result = result;
-        QUESTION_COUNT = (int) questionRepository.count();
     }
 
     @GetMapping
-    public RedirectView getQuestions(Model model) {
-
-        return new RedirectView("/question/0");
+    public ResponseEntity<List<Question>> getQuestions() {
+        var questions = questionRepository.findAll();
+        return ResponseEntity.ok(questions);
     }
 
     @GetMapping("/{pageNo}")
-    public String getQuestionsByPage(Model model,
+    public ResponseEntity<List<Question>> getQuestionsByPage(
             @PathVariable(required = false) Optional<Integer> pageNo) {
         if (!pageNo.isPresent())
             pageNo = Optional.of(0);
@@ -53,48 +40,43 @@ public class QuestionController {
                 PAGE_SIZE,
                 Sort.by("questionNumber"));
         List<Question> questions = questionRepository.findAll(pageable).toList();
-        List<Answer> answers = new ArrayList<Answer>();
 
-        questions.forEach(question -> {
-            var answer = new Answer();
-            answer.setQuestion(question);
-            answers.add(answer);
-        });
-
-        model.addAttribute("answers", answers);
-
-        return "question/index";
+        return ResponseEntity.ok(questions);
     }
 
-    @RequestMapping(value = "/saveQuestions", consumes = {
-            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            MediaType.APPLICATION_JSON_VALUE,
-            MediaType.ALL_VALUE
-    }, method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
-    public String postQuestion(@ModelAttribute("answers") ArrayList<Answer> answers,
-            Model model) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Question> getQuestion(@PathVariable int id) throws ResourceNotFoundException {
+        var question = questionRepository.findById(
+                id)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found " + id));
+        return ResponseEntity.ok(question);
+    }
 
-        System.out.println(answers.size());
+    @PostMapping
+    public ResponseEntity<Question> addQuestion(@RequestBody Question question) {
+        questionRepository.save(question);
+        return ResponseEntity.ok(question);
+    }
 
-        int currentQuestionCount = result.getAnswers().size() + answers.size();
-        int pageNo = (currentQuestionCount) / PAGE_SIZE;
+    @PatchMapping("/{questionNumber}")
+    public ResponseEntity<Question> updateQuestion(@RequestBody Question question, @PathVariable int id) {
+        var old_question = questionRepository.findById(id).orElseThrow();
+        old_question.setQuestion(question.getQuestion());
+        old_question.setCaseFalse(question.getCaseFalse());
+        old_question.setCaseTrue(question.getCaseTrue());
+        old_question.setPoint(question.getPoint());
+        old_question.setTraitGroup(question.getTraitGroup());
 
-        RedirectView redirectView = new RedirectView();
-        redirectView.setContextRelative(false);
+        questionRepository.save(old_question);
+        return ResponseEntity.ok(question);
+    }
 
-        if (pageNo == QUESTION_COUNT / PAGE_SIZE) {
-            // last page
-            // return answer to result and save
-            // return result page with result object
-            System.out.println("Hello");
-            redirectView.setUrl("/test");
-            return "redirect:/test";
-        }
-        System.out.println("Hello 2");
-        // else, add values to answer list
-        model.addAttribute("pageNo", pageNo + 1);
-        redirectView.setUrl("question/index/{pageNo}");
-
-        return "question/index/" + pageNo;
+    @DeleteMapping("/{questionNumber}")
+    public ResponseEntity<Question> deleteQuestion(@PathVariable int id)
+            throws ResourceNotFoundException {
+        var question = questionRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Question not found " + id));
+        questionRepository.delete(question);
+        return ResponseEntity.ok(question);
     }
 }

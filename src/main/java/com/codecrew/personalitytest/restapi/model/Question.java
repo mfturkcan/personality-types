@@ -26,38 +26,12 @@ import javax.persistence.*;
 @JsonComponent
 public class Question implements Serializable {
 
-    public Question(String json) {
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            var question = mapper.readValue(json, Question.class);
-
-            this.id = question.getId();
-            this.question = question.getQuestion();
-            this.answerFalse = question.getAnswerFalse();
-            this.answerTrue = question.getAnswerTrue();
-            this.caseTrue = question.getCaseTrue();
-            this.caseFalse = question.getCaseFalse();
-            this.point = question.getPoint();
-            this.questionNumber = question.getQuestionNumber();
-            this.traitGroup = question.getTraitGroup();
-
-        } catch (JsonMappingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @Column(name = "question", columnDefinition = "LONGTEXT")
     private String question; // TODO: make variable name questionTitle
-    private short questionNumber;
     private short point;
     private PersonalityTraitGroup traitGroup;
     private String answerTrue;
