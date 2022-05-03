@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -54,7 +55,6 @@ public class ResultController {
         // if (userAnswer.getQuestionAnswers().size() < questionRepository.count()) {
         // throw new Exception("Some answers are missing!");
         // }
-
         var result = Result.builder()
                 .personName(userAnswer.getName())
                 .gender(userAnswer.getGender())
@@ -62,26 +62,29 @@ public class ResultController {
                 .date(LocalDate.now())
                 .isPublic(userAnswer.isPublic())
                 .build();
-
         List<PersonalityTrait> traits = new ArrayList<>();
 
-        var traitGroups = PersonalityTraitGroup.values();
-        var traitTypes = PersonalityTraitType.values();
+        PersonalityTraitGroup[] traitGroups = PersonalityTraitGroup.values();
 
-        for (int i = 0; i < traitGroups.length; i++) {
+        PersonalityTraitType[] traitTypes = PersonalityTraitType.values();
+
+        int i = 0;
+
+        for (var group : traitGroups) {
             var trait = PersonalityTrait.builder()
                     .totalPoint(0)
-                    .personalityTraitGroup(traitGroups[i])
+                    .personalityTraitGroup(group)
                     .personalityTraitType(traitTypes[i])
                     .build();
 
             var second_trait = PersonalityTrait.builder()
                     .totalPoint(0)
-                    .personalityTraitGroup(traitGroups[i])
-                    .personalityTraitType(traitTypes[i + i])
+                    .personalityTraitGroup(group)
+                    .personalityTraitType(traitTypes[i + 1])
                     .build();
 
             traits.addAll(List.of(trait, second_trait));
+            i += 2;
         }
 
         userAnswer.getQuestionAnswers().stream().forEachOrdered(qa -> {
@@ -91,21 +94,23 @@ public class ResultController {
             if (qa.isQuestionAnswer()) {
                 traitTypeQ = qa.getQuestion().getCaseTrue();
                 point = qa.getQuestion().getCaseTruePoint();
-            } else if (!qa.getQuestion().getAnswerAlternative().isBlank() && qa.isAlternative()) {
-                traitTypeQ = qa.getQuestion().getCaseAlternative();
-                point = qa.getQuestion().getCaseAlternativePoint();
-            } else {
+            } else if (!qa.isQuestionAnswer()) {
                 traitTypeQ = qa.getQuestion().getCaseFalse();
                 point = qa.getQuestion().getCaseFalsePoint();
             }
-
+            // else if if (!qa.getQuestion().getAnswerAlternative().isBlank() &&
+            // qa.isAlternative())
+            else {
+                traitTypeQ = qa.getQuestion().getCaseAlternative();
+                point = qa.getQuestion().getCaseAlternativePoint();
+            }
             var trait = traits.stream()
                     .filter(t -> (t.getPersonalityTraitGroup() == traitGroupQ
                             && t.getPersonalityTraitType() == traitTypeQ))
                     .findFirst().get();
+
             trait.setTotalPoint(trait.getTotalPoint() + point);
         });
-
         traits.stream().forEach(trait -> {
             trait.setResult(result);
         });
