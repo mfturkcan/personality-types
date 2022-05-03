@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Answer {
     private boolean questionAnswer;
+    private boolean isAlternative;
     private Question question;
 }

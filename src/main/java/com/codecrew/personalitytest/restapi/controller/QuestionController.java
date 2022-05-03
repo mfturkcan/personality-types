@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 @RestController(value = "api.question")
 @RequestMapping("/api/v1/question")
 public class QuestionController {
@@ -58,20 +60,31 @@ public class QuestionController {
         return ResponseEntity.ok(question);
     }
 
-    @PatchMapping("/{questionNumber}")
+    @Transactional
+    @PostMapping("/addMultiple")
+    public ResponseEntity<List<Question>> addQuestions(@RequestBody List<Question> questions) {
+        questionRepository.saveAll(questions);
+
+        return ResponseEntity.ok(questions);
+    }
+
+    @PatchMapping("/{id}")
     public ResponseEntity<Question> updateQuestion(@RequestBody Question question, @PathVariable int id) {
         var old_question = questionRepository.findById(id).orElseThrow();
         old_question.setQuestion(question.getQuestion());
         old_question.setCaseFalse(question.getCaseFalse());
         old_question.setCaseTrue(question.getCaseTrue());
-        old_question.setPoint(question.getPoint());
+        old_question.setCaseTruePoint(question.getCaseTruePoint());
+        old_question.setCaseFalsePoint(question.getCaseFalsePoint());
+        old_question.setQuestionNumber(question.getQuestionNumber());
+
         old_question.setTraitGroup(question.getTraitGroup());
 
         questionRepository.save(old_question);
         return ResponseEntity.ok(question);
     }
 
-    @DeleteMapping("/{questionNumber}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Question> deleteQuestion(@PathVariable int id)
             throws ResourceNotFoundException {
         var question = questionRepository.findById(id).orElseThrow(

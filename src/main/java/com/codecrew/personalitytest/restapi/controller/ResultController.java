@@ -4,6 +4,7 @@ import com.codecrew.personalitytest.restapi.dao.QuestionRepository;
 import com.codecrew.personalitytest.restapi.dao.ResultRepository;
 import com.codecrew.personalitytest.restapi.enums.PersonalityTraitGroup;
 import com.codecrew.personalitytest.restapi.enums.PersonalityTraitType;
+import com.codecrew.personalitytest.restapi.exception.ResourceNotFoundException;
 import com.codecrew.personalitytest.restapi.model.Answer;
 import com.codecrew.personalitytest.restapi.model.PersonalityTrait;
 import com.codecrew.personalitytest.restapi.model.Result;
@@ -34,9 +35,18 @@ public class ResultController {
         return ResponseEntity.ok(resultRepository.findAll());
     }
 
-    @GetMapping("/{name}")
-    public ResponseEntity<List<Result>> getResultsByPersonName(@PathVariable String name) {
-        return ResponseEntity.ok(resultRepository.findByPersonName(name).orElseThrow());
+    @GetMapping("/{resultId}")
+    public ResponseEntity<Result> getResultById(@PathVariable int resultId) throws ResourceNotFoundException {
+        var result = resultRepository.findById(resultId)
+                .orElseThrow(() -> new ResourceNotFoundException("Result not found with id" + resultId));
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<Result>> getResultsByPersonName(@PathVariable String name)
+            throws ResourceNotFoundException {
+        return ResponseEntity.ok(resultRepository.findByPersonName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Result not found with name" + name)));
     }
 
     @PostMapping
@@ -77,16 +87,23 @@ public class ResultController {
         userAnswer.getQuestionAnswers().stream().forEachOrdered(qa -> {
             var traitGroupQ = qa.getQuestion().getTraitGroup();
             PersonalityTraitType traitTypeQ;
-            if (qa.isQuestionAnswer())
+            int point;
+            if (qa.isQuestionAnswer()) {
                 traitTypeQ = qa.getQuestion().getCaseTrue();
-            else
+                point = qa.getQuestion().getCaseTruePoint();
+            } else if (!qa.getQuestion().getAnswerAlternative().isBlank() && qa.isAlternative()) {
+                traitTypeQ = qa.getQuestion().getCaseAlternative();
+                point = qa.getQuestion().getCaseAlternativePoint();
+            } else {
                 traitTypeQ = qa.getQuestion().getCaseFalse();
+                point = qa.getQuestion().getCaseFalsePoint();
+            }
 
             var trait = traits.stream()
                     .filter(t -> (t.getPersonalityTraitGroup() == traitGroupQ
                             && t.getPersonalityTraitType() == traitTypeQ))
                     .findFirst().get();
-            trait.setTotalPoint(trait.getTotalPoint() + qa.getQuestion().getPoint());
+            trait.setTotalPoint(trait.getTotalPoint() + point);
         });
 
         traits.stream().forEach(trait -> {
