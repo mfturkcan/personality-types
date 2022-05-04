@@ -22,7 +22,8 @@ public class Application {
             public void addCorsMappings(CorsRegistry registry) {
                 // TODO Auto-generated method stub
                 WebMvcConfigurer.super.addCorsMappings(registry);
-                registry.addMapping("/**").allowedOrigins("http://localhost:4200");
+                registry.addMapping("/**").allowedOrigins("http://localhost:4200",
+                        "https://personality-test-g2.netlify.app/");
             }
         };
     }
