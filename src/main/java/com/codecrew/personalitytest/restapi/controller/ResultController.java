@@ -60,7 +60,7 @@ public class ResultController {
                 .gender(userAnswer.getGender())
                 .email(userAnswer.getEmail())
                 .date(LocalDate.now())
-                .isPublic(userAnswer.isPublic())
+                .publicResult(userAnswer.isPublicResult())
                 .build();
         List<PersonalityTrait> traits = new ArrayList<>();
 
@@ -104,11 +104,13 @@ public class ResultController {
                 traitTypeQ = qa.getQuestion().getCaseAlternative();
                 point = qa.getQuestion().getCaseAlternativePoint();
             }
+            System.out.println(traitTypeQ);
+            System.out.println(traitGroupQ);
             var trait = traits.stream()
                     .filter(t -> (t.getPersonalityTraitGroup() == traitGroupQ
                             && t.getPersonalityTraitType() == traitTypeQ))
                     .findFirst().get();
-
+            System.out.println("found");
             trait.setTotalPoint(trait.getTotalPoint() + point);
         });
         traits.stream().forEach(trait -> {

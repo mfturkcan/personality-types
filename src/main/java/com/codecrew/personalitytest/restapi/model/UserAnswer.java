@@ -18,6 +18,6 @@ public class UserAnswer implements Serializable {
     private String name;
     private String email;
     private Gender gender;
-    private boolean isPublic;
+    private boolean publicResult;
     private List<Answer> questionAnswers;
 }

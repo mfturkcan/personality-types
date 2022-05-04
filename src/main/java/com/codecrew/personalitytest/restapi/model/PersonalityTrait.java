@@ -34,6 +34,6 @@ public class PersonalityTrait {
 
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name = "result_id")
+    @JoinColumn(name = "result_id", nullable = false)
     private Result result;
 }

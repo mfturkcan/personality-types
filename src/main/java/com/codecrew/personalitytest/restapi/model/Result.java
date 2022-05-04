@@ -32,7 +32,7 @@ public class Result {
     private String personName;
     private Gender gender;
     private String email;
-    private boolean isPublic;
+    private boolean publicResult;
     private LocalDate date;
 
     @JsonManagedReference
