@@ -33,6 +33,13 @@ public class QuestionController {
         return ResponseEntity.ok(questions);
     }
 
+    @GetMapping("/questionNumber")
+    public ResponseEntity<List<Question>> getByQuestionNumber() {
+        var questions = questionRepository.findAll(Sort.by("questionNumber"));
+
+        return ResponseEntity.ok(questions);
+    }
+
     @GetMapping("/{pageNo}")
     public ResponseEntity<List<Question>> getQuestionsByPage(
             @PathVariable(required = false) Optional<Integer> pageNo) {
@@ -52,6 +59,13 @@ public class QuestionController {
                 id)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found " + id));
         return ResponseEntity.ok(question);
+    }
+
+    @GetMapping("count")
+    public ResponseEntity<Long> getQuestionsCount() {
+        var count = questionRepository.count();
+
+        return ResponseEntity.ok(count);
     }
 
     @PostMapping
@@ -77,7 +91,6 @@ public class QuestionController {
         old_question.setCaseTruePoint(question.getCaseTruePoint());
         old_question.setCaseFalsePoint(question.getCaseFalsePoint());
         old_question.setQuestionNumber(question.getQuestionNumber());
-
         old_question.setTraitGroup(question.getTraitGroup());
 
         questionRepository.save(old_question);
@@ -91,5 +104,11 @@ public class QuestionController {
                 () -> new ResourceNotFoundException("Question not found " + id));
         questionRepository.delete(question);
         return ResponseEntity.ok(question);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAll() {
+        questionRepository.deleteAll();
+        return ResponseEntity.ok().build();
     }
 }
