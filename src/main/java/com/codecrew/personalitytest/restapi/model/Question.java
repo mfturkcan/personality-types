@@ -23,10 +23,9 @@ import javax.persistence.*;
 public class Question implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private int id;
 
-    @Column(name = "question", columnDefinition = "LONGTEXT")
     private String question; // TODO: make variable name questionTitle
     private int questionNumber;
     private short caseTruePoint;
