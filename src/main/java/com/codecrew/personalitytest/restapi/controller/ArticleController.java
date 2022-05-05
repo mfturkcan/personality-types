@@ -49,6 +49,7 @@ public class ArticleController {
                 .image(articleDto.getImage())
                 .build();
 
+        articleRepository.save(article);
         return ResponseEntity.ok(article);
     }
 
